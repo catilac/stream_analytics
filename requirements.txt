@@ -1,0 +1,2 @@
+twitter==1.14.1
+twisted==13.2.0
