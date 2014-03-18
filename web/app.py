@@ -1,9 +1,14 @@
 import tornado.ioloop
 from tornado.web import RequestHandler, Application
 import sys
+import os
 import json
 
-sys.path.append('../lib')
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../lib'))
+print path
+if not path in sys.path:
+    sys.path.insert(1, path)
+del path
 import top_hash
 
 th_client = top_hash.TopHashClient()
