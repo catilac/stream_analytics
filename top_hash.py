@@ -8,6 +8,9 @@ class TopHashClient(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.ip, self.port))
 
+    def __del__(self):
+        self.sock.close()
+
     def get_top_n(self, n):
         self.sock.send(str(n))
         data = self.sock.recv(4096)
