@@ -1,6 +1,12 @@
 import tornado.ioloop
 from tornado.web import RequestHandler, Application
+import sys
 import json
+
+sys.path.append('../lib')
+import top_hash
+
+th_client = top_hash.TopHashClient()
 
 class IndexHandler(RequestHandler):
     def get(self):
@@ -8,7 +14,8 @@ class IndexHandler(RequestHandler):
 
 class TopHashHandler(RequestHandler):
     def get(self, num):
-        resp = "The num is: %s" % num
+        top_hashtags = th_client.get_top_n(num)
+        resp = json.dumps(top_hashtags)
         self.write(resp)
 
 if __name__ == '__main__':
