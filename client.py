@@ -1,29 +1,23 @@
-from twisted.internet import reactor
-from twisted.internet.protocol import Protocol, Factory
-from twisted.internet.endpoints import TCP4ClientEndpoint
+import socket
+from ast import literal_eval
 
-class TopHashProtocol(Protocol):
-    def connectionMade(self):
-        print "Connection Made"
+class TopHashClient(object):
+    def __init__(self):
+        self.ip = '127.0.0.1'
+        self.port = 8000
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect((self.ip, self.port))
 
-    def dataReceived(self, data):
-        self.transport.loseConnection()
-        print "Received data: \n", data
+    def get_top_n(self, n):
+        self.sock.send(str(n))
+        data = self.sock.recv(4096)
+        return literal_eval(data)
 
-    def sendMessage(self, msg):
-        print "SendMessage: ", msg
-        self.transport.write(msg)
 
-class TopHashFactory(Factory):
-    def buildProtocol(self, addr):
-        return TopHashProtocol()
-
-def gotProtocol(p):
-    print "Got Protocol"
-    p.sendMessage("5")
+def main():
+    client = TopHashClient()
+    while 1:
+        print client.get_top_n(5)
 
 if __name__ == '__main__':
-    point = TCP4ClientEndpoint(reactor, "localhost", 8000)
-    d = point.connect(TopHashFactory())
-    d.addCallback(gotProtocol)
-    reactor.run()
+    main()
