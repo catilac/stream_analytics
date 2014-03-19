@@ -20,8 +20,10 @@ class IndexHandler(RequestHandler):
         self.render("index.html")
 
 class TopHashHandler(RequestHandler):
+
     def get(self, num):
-        if not th_client:
+        global th_client
+        if th_client == None:
             th_client = top_hashtag.TopHashtagClient()
         top_hashtags = th_client.get_top_n(num)
         resp = json.dumps(top_hashtags)
