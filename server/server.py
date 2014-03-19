@@ -1,20 +1,17 @@
 from twisted.internet.protocol import Protocol, Factory
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet import reactor
-import threading
+from threading import Thread
 
 from top_hashtags import TopHashtags
 
-top_hashtags = TopHashtags()
-threading.Thread(target=top_hashtags.start).start()
-
 class StatServer(Protocol):
-    def __init__(self, factory, top_hashtags):
+    def __init__(self, factory):
         self.factory = factory
-        self._top_hashtags = top_hashtags
 
     def get_top(self, num):
-        return self._top_hashtags.get_top_n(num)
+        th = self.factory.top_hashtags
+        return th.get_top_n(num)
 
     def connectionMade(self):
         self.factory.numProtocols = self.factory.numProtocols+1
@@ -38,10 +35,12 @@ class StatServer(Protocol):
 class StatFactory(Factory):
     def __init__(self):
         self.numProtocols = 0
+        self.top_hashtags = TopHashtags()
+        Thread(target=self.top_hashtags.start).start()
 
     def buildProtocol(self, addr):
         """ Start TopHash and pass it into protocol """
-        return StatServer(self, top_hashtags)
+        return StatServer(self)
 
 def main():
     endpoint = TCP4ServerEndpoint(reactor, 8000)
