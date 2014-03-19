@@ -12,7 +12,7 @@ var RealTimeHashTags = function(n) {
     };
 
     this._topUrl = function() {
-        return "http://localhost:8000/top/"+(this.n || 10);
+        return "top/"+(this.n || 10);
     };
 
     this._getUpdates = function() {
