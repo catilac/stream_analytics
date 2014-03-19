@@ -17,7 +17,7 @@ th_client = None
 
 class IndexHandler(RequestHandler):
     def get(self):
-        self.write("Stub for index page")
+        self.render("index.html")
 
 class TopHashHandler(RequestHandler):
     def get(self, num):
