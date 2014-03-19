@@ -9,9 +9,9 @@ print path
 if not path in sys.path:
     sys.path.insert(1, path)
 del path
-import top_hash
+import top_hashtag
 
-th_client = top_hash.TopHashClient()
+th_client = top_hashtag.TopHashtagClient()
 
 class IndexHandler(RequestHandler):
     def get(self):

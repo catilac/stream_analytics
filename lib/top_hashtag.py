@@ -1,7 +1,7 @@
 import socket
 from ast import literal_eval
 
-class TopHashClient(object):
+class TopHashtagClient(object):
     def __init__(self):
         self.ip = '127.0.0.1'
         self.port = 8000
@@ -18,7 +18,7 @@ class TopHashClient(object):
 
 
 def main():
-    client = TopHashClient()
+    client = TopHashtagClient()
     while 1:
         print client.get_top_n(5)
 
