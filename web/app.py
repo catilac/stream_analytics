@@ -35,7 +35,7 @@ if __name__ == '__main__':
     application = Application([
         (r"/", IndexHandler),
         (r"/top/([0-9]+)/?", TopHashHandler),
-    ], settings)
+    ], **settings)
 
     application.listen(3001)
     print "Web Running on port 3001"
