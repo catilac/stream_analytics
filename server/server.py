@@ -34,7 +34,6 @@ class StatServer(Protocol):
 
         top_hashtags = str(self.get_top(num))
         self.transport.write(top_hashtags)
-        self.transport.loseConnection()
 
 class StatFactory(Factory):
     def __init__(self):
