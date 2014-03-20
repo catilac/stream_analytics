@@ -8,7 +8,19 @@ var RealTimeHashTags = function(n) {
      * receive updates from server
      */
     this.start = function() {
-        this._getUpdates();
+        /* Start worker for getting updates */
+        if (this._intervalId) {
+            clearInterval(this._intervalId);
+        }
+
+        self._intervalId = setInterval(
+            (function(self) {
+                return function() {
+                    self._getUpdates();
+                };
+            })(this),
+            1000
+        );
     };
 
     this._topUrl = function() {
@@ -24,8 +36,6 @@ var RealTimeHashTags = function(n) {
 
     this._onReceive = function(data) {
         console.log("Received: ", data);
-        this._getUpdates();
-        return;
     };
 
     this.setOnReceive = function(func) {
@@ -37,8 +47,5 @@ var RealTimeHashTags = function(n) {
 
 $(function() {
     rtht = new RealTimeHashTags();
-    rtht.setOnReceive(function(data) {
-        console.log(data);
-    });
     rtht.start();
 });
