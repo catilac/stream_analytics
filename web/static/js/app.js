@@ -46,11 +46,9 @@ var RealTimeHashTags = function(n) {
 };
 
 function processD3Factory() {
-    var shouldRedraw = false;
     var width = 420,
         barHeight = 20;
     var chart = d3.select('.chart');
-    var bar = chart.selectAll('g');
 
     var draw = function(data) {
         var _data = JSON.parse(data);
@@ -60,13 +58,20 @@ function processD3Factory() {
 
         chart.attr("width", width)
             .attr("height", barHeight * _data.length);
+
+        // HACK - just removing all data and then entering all of
+        // in again.
+        // TODO - deal with data diffs properly, and animate removals
+        // and a shifting barchart
+        chart.selectAll("g").data([]).exit().remove();
         var bar = chart.selectAll("g")
-            .data(_data)
-          .enter().append("g")
+            .data(_data, function(d) { return d[0]+d[1]; });
+
+        bar.enter().append("g")
             .attr("transform", function(d,i) {
                 return "translate(0," + i * barHeight +")";
             });
-        
+
         bar.append("rect")
             .attr("width", function(d) { return x(d[1]); })
             .attr("height", barHeight - 1);
@@ -76,46 +81,11 @@ function processD3Factory() {
             .attr("y", barHeight / 2)
             .attr("dy", ".35em")
             .text(function(d) { return d[0] + "(" + d[1] + ")" });
-
-        shouldRedraw = true;
     }
 
-    var redraw = function(data) { 
-        console.log(data);
-        var _data = JSON.parse(data);
-        var x = d3.scale.linear()
-            .domain([0, d3.max(_data, function(d){ return d[1]; })])
-            .range([0, width]);
-
-        chart.attr("width", width)
-            .attr("height", barHeight * _data.length);
-
-        var bar = chart.selectAll("g")
-            .data(_data, function(d) { return d[0]  + "(" + d[1] + ")"; });
-        bar.enter().append("g")
-              .attr("transform", function(d, i) {
-                  return "translate(0," + i * barHeight +")";
-              });
-
-        bar.selectAll("rect")
-          .transition()
-            .attr("width", function(d) { return x(d[1]); })
-            .attr("height", barHeight - 1);
-
-        bar.selectAll("text")
-          .transition()
-            .text(function(d) { return d[0] + "(" + d[1] + ")" ; })
-            .attr("x", function(d) { return x(d[1]) - 3; });
-
-        bar.exit().remove();
-    }
 
     return function(data) {
-        if (!shouldRedraw) {
-            draw(data);
-        } else {
-            redraw(data);
-        }
+        draw(data);
     };
 }
 
